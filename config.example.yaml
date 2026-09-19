@@ -1,0 +1,37 @@
+# ---------------------------------------------------------------
+# Copy to config.yaml and edit.  cp config.example.yaml config.yaml
+# config.yaml holds RTSP credentials and is git-ignored.
+# ---------------------------------------------------------------
+
+cameras:
+  - name: entrance          # unique; appears in alerts and logs
+    rtsp_url: "rtsp://USER:PASS@192.0.2.10:554/Streaming/Channels/102"
+    enabled: true
+  - name: warehouse
+    rtsp_url: "rtsp://USER:PASS@192.0.2.11:554/Streaming/Channels/102"
+    enabled: false
+
+detection:
+  mode: mock                          # mock | cpu | edgetpu
+  model_path: /models/fire_smoke.tflite
+  labels_path: /models/labels.txt
+  confidence_threshold: 0.45          # 0–1
+  inference_interval_seconds: 2       # frame sampling period per camera
+  draw_boxes: true
+  consecutive_hits: 2                 # detections required before alerting
+  confirm_window_seconds: 10          # 0 = require strictly consecutive hits
+  tiles: 1                            # 1 = whole frame, 2 = 2x2 grid
+  save_detections_dir: ""             # "" disables saving
+  alert_labels: [fire, smoke]
+
+alerts:
+  cooldown_seconds: 120               # per camera
+  send_retries: 3
+  dry_run: false
+  caption_language: both              # ar | en | both
+
+system:
+  max_enabled_cameras: 8              # hard limit for a single accelerator
+  reconnect_backoff_seconds: [1, 2, 5, 10, 30]
+  heartbeat_interval_seconds: 60
+  queue_max_size: 32
