@@ -43,17 +43,7 @@
 ## البنية المعمارية
 
 ```
-                 ┌──────────────┐   ┌──────────────┐        ┌──────────────┐
-  RTSP cam 1 ──► │ CameraWorker │──►│              │        │              │
-  RTSP cam 2 ──► │ CameraWorker │──►│  طابور مشترك  │──►  ┌─►│ DetectorWorker│
-     ...         │     ...      │   │ (shared queue)│     │  │  (Coral TPU)  │
-  RTSP cam N ──► │ CameraWorker │──►│              │     │  └──────┬───────┘
-                 └──────────────┘   └──────────────┘     │         │ خطر؟
-   كل كاميرا في خيط مستقل + إعادة اتصال        TPU واحد ──┘         ▼
-   وأخذ عيّنة إطار كل فترة قابلة للضبط          (استدلال متسلسل)  ┌──────────────┐
-                                                               │ AlertManager │──► Telegram
-                                                               │ cooldown+retry│   (sendPhoto)
-                                                               └──────────────┘
+<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/01940b76-69f5-44ed-9669-ed1c3de8befa" />
 ```
 
 - **كاميرا = خيط مستقل:** سحب RTSP وإعادة اتصال بتباعد متزايد. تعطّل كاميرا
