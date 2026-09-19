@@ -43,7 +43,20 @@
 ## البنية المعمارية
 
 ```
-<img width="1024" height="559" alt="image" src="https://github.com/user-attachments/assets/01940b76-69f5-44ed-9669-ed1c3de8befa" />
+┌─────────────────┐
+│  RTSP Camera 1  ├─┐
+├─────────────────┤ │    ┌──────────────┐      ┌──────────────┐      ┌────────────────┐
+│  RTSP Camera 2  ├─┼───►│ CameraWorker │────► │ Shared Queue │────► │ DetectorWorker │
+├─────────────────┤ │    └──────────────┘      └──────────────┘      │  (Coral TPU)   │
+│       ...       ├─┘           │                                    └───────┬────────┘
+├─────────────────┤             ▼                                            │
+│  RTSP Camera N  │     • Independent thread per camera                      │ Threat
+└─────────────────┘     • Automatic reconnection                             ▼ detected?
+                        • Configurable frame sampling                ┌────────────────┐
+                                                                     │  AlertManager  ├─► Telegram
+                                                                     ├────────────────┤   (sendPhoto)
+                                                                     │ Cooldown+Retry │
+                                                                     └────────────────┘
 ```
 
 - **كاميرا = خيط مستقل:** سحب RTSP وإعادة اتصال بتباعد متزايد. تعطّل كاميرا
